@@ -151,7 +151,6 @@ All of the app-level configuration parameters are configurable in the controller
   self.predicate_prefix = '.'
   self.number_of_records_in_a_page = 15
   self.id_is_primary_key_param = true
-  self.update_should_return_entity = false
 ```
 
 #### About Extensions
