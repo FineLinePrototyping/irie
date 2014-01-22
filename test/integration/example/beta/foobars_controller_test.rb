@@ -4,7 +4,6 @@ class Example::Beta::TestFoobarsController < ActionDispatch::IntegrationTest
   
   def setup
     ::DatabaseCleaner.start
-    ::Irie.update_should_return_entity = true
     @controller = Example::Beta::FoobarsController.new
     $test_role = 'admin'
 

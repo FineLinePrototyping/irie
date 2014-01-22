@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gemspec
 
-gem 'inherited_resources', :github => 'josevalim/inherited_resources'
+gem 'inherited_resources', '~> 1.4.1'
 
 # have to be explicit about activesupport to trump dependencies from gemspec
 gem 'rails', '~> 4.0'

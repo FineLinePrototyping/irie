@@ -1,3 +1,7 @@
+## Irie 1.0.4 ##
+
+* Removed unused update_should_return_entity from config that was left over from pre-IR.
+
 ## Irie 1.0.3 ##
 
 * Conditionally monkey patch deep_dup for Rails 3.2 support.

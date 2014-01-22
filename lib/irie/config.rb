@@ -10,7 +10,6 @@ module Irie
     :id_is_primary_key_param,
     :number_of_records_in_a_page,
     :predicate_prefix,
-    :update_should_return_entity,
     :extension_include_order
   ]
 
@@ -113,10 +112,6 @@ end
     :index_query,
     :nil_params
   ]
-
-  # By default, it sets the instance variable, but does not return entity if request
-  # update, e.g. in JSON format.
-  self.update_should_return_entity = false
 
   # Extensions to actions that you can implement in the controller via
   # `include_extensions`, e.g. `include_extensions :count, :paging`

@@ -4,7 +4,6 @@ class Example::Alpha::TestSpecialBarfoosController < ActionDispatch::Integration
 
   def setup
     ::DatabaseCleaner.start
-    ::Irie.update_should_return_entity = false
     @controller = ::Example::Alpha::SpecialBarfoosController.new
     $test_role = 'admin'
   end
