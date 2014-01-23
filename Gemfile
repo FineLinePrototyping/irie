@@ -15,4 +15,5 @@ gem 'jbuilder', '~> 1.5.2'
 gem 'simplecov', '~> 0.7.1'
 gem 'minitest', '> 4.7.4'
 gem 'sqlite3', :platform => :ruby
+gem 'jdbc-sqlite3', :platform => :jruby
 gem 'activerecord-jdbc-adapter', :platform => :jruby
