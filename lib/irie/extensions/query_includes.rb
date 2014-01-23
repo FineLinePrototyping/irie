@@ -91,27 +91,6 @@ module Irie
           super
         end
       end
-
-      def build_resource
-        cached = get_resource_ivar
-        if cached
-          logger.debug("Irie::Extensions::QueryIncludes.build_resource returning cached resource") if ::Irie.debug?
-          return cached
-        end
-        logger.debug("Irie::Extensions::QueryIncludes.build_resource") if ::Irie.debug?
-        this_includes = self.action_to_query_includes[params[:action].to_sym] || self.all_action_query_includes
-        if this_includes && this_includes.size > 0
-          # can return the model class, so won't call bang (includes!) method
-          object = end_of_association_chain.includes(*this_includes)
-
-          logger.debug("Irie::Extensions::QueryIncludes.build_resource: end_of_association_chain.to_sql: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
-
-          set_resource_ivar object.send(method_for_build, *resource_params)
-        else
-          object
-        end
-      end
-
     end
   end
 end

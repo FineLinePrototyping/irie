@@ -123,7 +123,7 @@ or in bulk, like:
 
   # Included if the action method exists when `extensions` is called.
   self.autoincludes = {
-    create: [:smart_layout, :query_includes],
+    create: [:smart_layout],
     destroy: [:smart_layout, :query_includes],
     edit: [:smart_layout, :query_includes],
     index: [:smart_layout, :index_query, :order, :param_filters, :params_to_joins, :query_filter, :query_includes],
@@ -422,7 +422,7 @@ query_includes posts: [{comments: :guest}, :tags]
 and action-specific:
 
 ```ruby
-query_includes_for :create, are: [:category, :comments]
+query_includes_for :update, are: [:category, :comments]
 query_includes_for :index, :show, are: [posts: [{comments: :guest}, :tags]]
 ```
 
