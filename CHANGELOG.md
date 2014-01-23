@@ -1,3 +1,7 @@
+## Irie 1.0.5 ##
+
+* removing :query_includes default autoinclude for create. build_resource is only used for create and new, so it doesn't seem like it would ever make sense to use includes on those actions.
+
 ## Irie 1.0.4 ##
 
 * Removed unused update_should_return_entity from config that was left over from pre-IR.
