@@ -6,8 +6,10 @@ module Irie
     :available_extensions,
     :can_filter_by_default_using,
     :debug,
+    :verbose,
     :function_param_names,
     :id_is_primary_key_param,
+    :logger,
     :number_of_records_in_a_page,
     :predicate_prefix,
     :extension_include_order
@@ -16,6 +18,10 @@ module Irie
   class << self
     CONTROLLER_OPTIONS.each{|name|attr_accessor name; define_method("#{name}?") { !!public_send(name) } }
     def configure(&blk); class_eval(&blk); end
+
+    def logger
+      @logger ||= defined?(Rails) ? Rails.logger : Logger.new(STDOUT)
+    end
 
     # Adds to extension_include_order and extension_include_order, e.g.
     #   ::Irie.register_extension :boolean_params, '::Focal::Irie::BooleanParams'
@@ -120,7 +126,7 @@ end
   # You shouldn't have to worry about configuring this typically.
   self.available_extensions = {}
 
-  # If true, will logger.debug in instance methods to help with execution tracing at
+  # If true, will ::Irie.logger.debug in instance methods to help with execution tracing at
   # runtime.
   self.debug = false
 end

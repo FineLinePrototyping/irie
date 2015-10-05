@@ -1,6 +1,4 @@
-ActiveRecord::Base.establish_connection(:adapter => "sqlite3", :database => ":memory:")
-
-ActiveRecord::Schema.define(:version => 1) do
+ActiveRecord::Schema.define do
   create_table :foos do |t|
     t.string :code
     t.integer :bar_id
@@ -32,21 +30,19 @@ ActiveRecord::Schema.define(:version => 1) do
     t.string :role
   end
 
-  # default Rails 4 beta1 scaffold generated model
   create_table :posts do |t|
     t.string :name
     t.string :title
     t.text :content
 
-    t.timestamps
+    t.timestamps null: true
   end
 
-  # copied default Rails 4 scaffold-generated model for comparison
   create_table :my_posts do |t|
     t.string :name
     t.string :title
     t.text :content
 
-    t.timestamps
+    t.timestamps null: true
   end
 end

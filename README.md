@@ -581,6 +581,12 @@ However, that might not catch all the initialization debug logging that could oc
 config.log_level = :debug
 ```
 
+If you are really having trouble tracking down a problem and can live with the significant impact of increasing the number and result size of queries and are ok with a lot more data being logged, you can turn on more verbose debug logging via:
+
+```ruby
+::Irie.debug = ::Irie.verbose = true
+```
+
 ### restful_json
 
 The project was originally named [restful_json][restful_json]. Old commit tags corresponding to restful_json versions may be found in [legacy][legacy].

@@ -8,8 +8,10 @@ module Irie
       protected
       
       def autorender_count(options={}, &block)
-        logger.debug("Irie::Extensions::AutorenderCount.autorender_count") if ::Irie.debug?
-        render request.format.symbol => { count: @count }, status: 200, layout: false
+        ::Irie.logger.debug("[Irie] Irie::Extensions::AutorenderCount.autorender_count: count: #{@count}") if ::Irie.debug?
+        result = render(request.format.symbol => { count: @count }, status: 200, layout: false)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::AutorenderCount.autorender_count: result: #{result.inspect}") if ::Irie.verbose?
+        result
       end
       
     end

@@ -1,3 +1,10 @@
+## Irie 1.1.0 ##
+
+* Support Arel 6 (ActiveRecord/Rails 4.2) which stopped handling erroneously Array-wrapped values as single values for predicates taking single values.
+* Added `Irie.logger` configuration and railtie to set it to Rails logger.
+* Added additional debug logging, and Irie debug log messages prefixed with `[Irie]`.
+* Added verbose config option to dump collection/resource inspect information while processing. Note: if you use it, it will result in additional queries.
+
 ## Irie 1.0.5 ##
 
 * removing :query_includes default autoinclude for create. build_resource is only used for create and new, so it doesn't seem like it would ever make sense to use includes on those actions.

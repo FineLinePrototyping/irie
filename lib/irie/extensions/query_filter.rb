@@ -36,8 +36,9 @@ module Irie
       protected
 
       def collection
-        logger.debug("Irie::Extensions::QueryFilter.collection") if ::Irie.debug?
+        ::Irie.logger.debug("[Irie] Irie::Extensions::QueryFilter.collection") if ::Irie.debug?
         object = super
+        ::Irie.logger.debug("[Irie] Irie::Extensions::QueryFilter.collection starting after super with object=#{object.inspect}") if ::Irie.verbose?
         # convert to relation if model class because proc expects a relation
         object = object.all unless object.is_a?(ActiveRecord::Relation)
 
@@ -45,11 +46,14 @@ module Irie
         self.param_to_query.each do |param_name, param_query|
           param_value = params[param_name]
           unless param_value.nil?
-            object = param_query.call(object, convert_param(param_name.to_s, param_value))
+            converted_param = convert_param(param_name.to_s, param_value)
+            ::Irie.logger.debug("[Irie] Irie::Extensions::QueryFilter.collection: param_to_query: before query call with object=#{object.inspect} and converted_param=#{converted_param.inspect}") if ::Irie.verbose?
+            object = param_query.call(object, converted_param)
+            ::Irie.logger.debug("[Irie] Irie::Extensions::QueryFilter.collection: param_to_query: after query call with object=#{object.inspect}") if ::Irie.verbose?
           end
         end
 
-        logger.debug("Irie::Extensions::QueryFilter.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::QueryFilter.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
 
         set_collection_ivar object
       end

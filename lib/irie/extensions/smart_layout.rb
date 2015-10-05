@@ -10,8 +10,12 @@ module Irie
       end
       
       def index(options={}, &block)
-        logger.debug("Irie::Extensions::NoLayout.index") if ::Irie.debug?
-        options.merge!({layout: false}) unless request.format.html?
+        if request.format.html?
+          ::Irie.logger.debug("[Irie] Irie::Extensions::SmartLayout.index: not merging layout:false into options because not html") if ::Irie.debug?
+        else
+          ::Irie.logger.debug("[Irie] Irie::Extensions::SmartLayout.index: merging layout:false into options because format.html? is truthy") if ::Irie.debug?
+          options.merge!({layout: false}) unless request.format.html?
+        end
         super(options, &block)
       end
 

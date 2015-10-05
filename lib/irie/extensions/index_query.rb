@@ -30,16 +30,19 @@ module Irie
       protected
 
       def collection
-        logger.debug("Irie::Extensions::IndexQuery.collection") if ::Irie.debug?
+        ::Irie.logger.debug("[Irie] Irie::Extensions::IndexQuery.collection") if ::Irie.debug?
         object = super
+        ::Irie.logger.debug("[Irie] Irie::Extensions::IndexQuery.collection starting after super with object=#{object.inspect}") if ::Irie.verbose?
         if self.custom_index_query
           # convert to relation if model class because proc expects a relation
           object = object.all unless object.is_a?(ActiveRecord::Relation)
           a = object.to_s
+          ::Irie.logger.debug("[Irie] Irie::Extensions::IndexQuery.collection before custom_index_query with object=#{object.inspect}") if ::Irie.verbose?
           object = self.custom_index_query.call(object)
+          ::Irie.logger.debug("[Irie] Irie::Extensions::IndexQuery.collection after custom_index_query with object=#{object.inspect}") if ::Irie.verbose?
         end
 
-        logger.debug("Irie::Extensions::IndexQuery.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::IndexQuery.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
 
         set_collection_ivar object
       end

@@ -85,8 +85,9 @@ module Irie
       protected
 
       def collection
-        logger.debug("Irie::Extensions::Order.collection") if ::Irie.debug?
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection") if ::Irie.debug?
         object = super
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection starting after super with object=#{object.inspect}") if ::Irie.verbose?
 
         already_ordered_by = []
         aliased_params(:order).collect{|p| p.split(',')}.flatten.collect(&:strip).each do |split_param_name|
@@ -112,6 +113,7 @@ module Irie
           # if there is one.
           if self.can_be_ordered_by.include?(split_param_name) && !already_ordered_by.include?(attr_sym)
             join_to_apply = join_for_param(split_param_name)
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: can_be_ordered_by: calling joins(#{join_to_apply.inspect})") if ::Irie.verbose?
             object = object.joins(join_to_apply) if join_to_apply
             arel_table_column = get_arel_table(split_param_name)[attr_sym]
             raise ::Irie::ConfigurationError.new "can_order_by/define_params config problem: could not find arel table/column for param name #{split_param_name.inspect} and/or attr_sym #{attr_sym.inspect}" unless arel_table_column
@@ -119,7 +121,10 @@ module Irie
             sql_fragment = "#{arel_table_column.relation.name}.#{arel_table_column.name}#{direction == :desc ? ' DESC' : ''}"
             # Important note! the behavior of multiple `order`'s' got reversed between Rails 4.0.0 and 4.0.1:
             # http://weblog.rubyonrails.org/2013/11/1/Rails-4-0-1-has-been-released/
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: aliased_params: calling order(#{sql_fragment.inspect})") if ::Irie.debug?
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: aliased_params: before order object=#{object.inspect}") if ::Irie.verbose?
             object = object.order(sql_fragment)
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: aliased_params: after order object=#{object.inspect}") if ::Irie.verbose?
             already_ordered_by << attr_sym
           end
 
@@ -136,13 +141,16 @@ module Irie
             arel_table_column = get_arel_table(split_param_name)[attr_sym]
             raise ::Irie::ConfigurationError.new "default_order_by/define_params config problem: could not find arel table/column for param name #{split_param_name.inspect} and/or attr_sym #{attr_sym.inspect}" unless arel_table_column
             #TODO: is there a better way? not sure how else to order on joined table columns- no example
-            sql_fragment = "#{arel_table_column.relation.name}.#{arel_table_column.name}#{direction == :desc ? ' DESC' : ''}"            
+            sql_fragment = "#{arel_table_column.relation.name}.#{arel_table_column.name}#{direction == :desc ? ' DESC' : ''}"
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: default_ordered_by: calling order(#{sql_fragment.inspect})") if ::Irie.debug?
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: default_ordered_by: before order object=#{object.inspect}") if ::Irie.verbose?
             object = object.order(sql_fragment)
+            ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: default_ordered_by: after order object=#{object.inspect}") if ::Irie.verbose?
             already_ordered_by << attr_sym
           end
         end
 
-        logger.debug("Irie::Extensions::Order.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Order.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
 
         set_collection_ivar object
       end

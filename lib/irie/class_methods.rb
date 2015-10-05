@@ -45,7 +45,7 @@ module Irie
       ordered_extension_syms.each do |arg_sym|
         if module_class_name = self.available_extensions[arg_sym]
           begin
-            logger.debug("Irie::ClassMethods.extensions! #{self} including #{module_class_name}") if ::Irie.debug?
+            ::Irie.logger.debug("[Irie] Irie::ClassMethods.extensions! #{self} including #{module_class_name}") if ::Irie.debug?
             include module_class_name.constantize
           rescue NameError => e
             raise ::Irie::ConfigurationError.new "Failed to constantize '#{module_class_name}' with extension key #{arg_sym.inspect} in self.available_extensions. Error: \n#{e.message}\n#{e.backtrace.join("\n")}"

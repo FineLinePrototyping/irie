@@ -44,8 +44,11 @@ ruby-gemset
 gemfiles/tmp/
 
 # ignore temp/log files in dummy
-spec/dummy/tmp/
-spec/dummy/log/
+test/dummy/tmp/
+test/dummy/log/
+
+# ignore sqlite db in dummy
+test/dummy/db/test.sqlite3
 
 # ignore reports
 coverage/

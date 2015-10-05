@@ -92,11 +92,15 @@ module Irie
         end
       end
 
+      IRIE_ARY_PREDICATES = [:not_eq_any, :not_eq_all, :eq_any, :eq_all, :in_any, :in_all, :not_in_any, :not_in_all, :matches_any, :matches_all, :does_not_match_all,
+        :gteq_any, :gteq_all, :gt_any, :gt_all, :lt_any, :lt_all, :lteq_any, :lteq_all]
+
       protected
 
       def collection
-        logger.debug("Irie::Extensions::ParamFilters.collection") if ::Irie.debug?
+        ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection") if ::Irie.debug?
         object = super
+        ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection starting after super with object=#{object.inspect}") if ::Irie.verbose?
         already_filtered_by_split_param_names = []
         self.composite_param_to_param_name_and_arel_predicate.each do |composite_param, param_name_and_arel_predicate, split|
           if params.key?(composite_param)
@@ -106,10 +110,16 @@ module Irie
             # support for named_params/:through renaming of param name
             attr_sym = attr_sym_for_param(split_param_name)
             join_to_apply = join_for_param(split_param_name)
-            object = object.joins(join_to_apply) if join_to_apply
+            if join_to_apply
+              ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: composite_param_to_param_name_and_arel_predicate: object.joins(#{join_to_apply.inspect})") if ::Irie.debug?
+              object = object.joins(join_to_apply)
+            end
+            # note: we call it column but it is Arel::Attributes::Attribute
             arel_table_column = get_arel_table(split_param_name)[attr_sym]
             raise ::Irie::ConfigurationError.new "can_filter_by/define_params config problem: could not find arel table/column for param name #{split_param_name.inspect} and/or attr_sym #{attr_sym.inspect}" unless arel_table_column
+            ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: composite_param_to_param_name_and_arel_predicate: before adding where col=#{arel_table_column.inspect} pred=#{predicate_sym.inspect} equal_to_or_in=#{converted_param_values.inspect} with object=#{object.inspect}") if ::Irie.verbose?
             object = object.where(arel_table_column.send(predicate_sym, converted_param_values))
+            ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: composite_param_to_param_name_and_arel_predicate: after adding where col=#{arel_table_column.inspect} pred=#{predicate_sym.inspect} equal_to_or_in=#{converted_param_values.inspect} with object=#{object.inspect}") if ::Irie.verbose?
             already_filtered_by_split_param_names << split_param_name
           end
         end
@@ -118,16 +128,23 @@ module Irie
           unless already_filtered_by_split_param_names.include?(split_param_name) || predicates_to_default_values.blank?
             attr_sym = attr_sym_for_param(split_param_name)
             join_to_apply = join_for_param(split_param_name)
-            object = object.joins(join_to_apply) if join_to_apply
+            if join_to_apply
+              ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: default_filtered_by: object.joins(#{join_to_apply.inspect})") if ::Irie.debug?
+              object = object.joins(join_to_apply)
+            end
+            # note: we call it column but it is Arel::Attributes::Attribute
             arel_table_column = get_arel_table(split_param_name)[attr_sym]
             raise ::Irie::ConfigurationError.new "default_filter_by/define_params config problem: could not find arel table/column for param name #{split_param_name.inspect} and/or attr_sym #{attr_sym.inspect}" unless arel_table_column
             predicates_to_default_values.each do |predicate_sym, one_or_more_default_values|
-              object = object.where(arel_table_column.send(predicate_sym, Array.wrap(one_or_more_default_values)))
+              one_or_more_default_values = Array.wrap(one_or_more_default_values) if IRIE_ARY_PREDICATES.include?(predicate_sym)
+              ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: default_filtered_by: before adding where col=#{arel_table_column.inspect} pred=#{predicate_sym.inspect} equal_to_or_in=#{one_or_more_default_values.inspect} with object=#{object.inspect}") if ::Irie.verbose?
+              object = object.where(arel_table_column.send(predicate_sym, one_or_more_default_values))
+              ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: default_filtered_by: after adding where col=#{arel_table_column.inspect} pred=#{predicate_sym.inspect} equal_to_or_in=#{one_or_more_default_values.inspect} with object=#{object.inspect}") if ::Irie.verbose?
             end
           end
         end
 
-        logger.debug("Irie::Extensions::ParamFilters.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::ParamFilters.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
         
         set_collection_ivar object
       end

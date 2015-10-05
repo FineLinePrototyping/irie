@@ -12,11 +12,15 @@ module Irie
       protected
 
       def collection
-        logger.debug("Irie::Extensions::Offset.collection") if ::Irie.debug?
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Offset.collection") if ::Irie.debug?
         object = super
-        aliased_params(:offset).each {|param_value| object = object.offset(param_value)}
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Offset.collection starting after super with object=#{object.inspect}") if ::Irie.verbose?
+        offset_params = aliased_params(:offset)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Offset.collection: offset_params=#{offset_params.inspect}") if ::Irie.debug?
+        offset_params.each {|param_value| object = object.offset(param_value.to_i)}
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Offset.collection: after offsets object=#{object.inspect}") if ::Irie.verbose?
 
-        logger.debug("Irie::Extensions::Offset.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
+        ::Irie.logger.debug("[Irie] Irie::Extensions::Offset.collection: relation.to_sql so far: #{object.to_sql}") if ::Irie.debug? && object.respond_to?(:to_sql)
 
         set_collection_ivar object
       end

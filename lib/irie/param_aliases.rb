@@ -9,7 +9,7 @@ module Irie
     # values for all matching defined request params. Does *not* convert param
     # value with convert_param(...).
     def aliased_params(function_sym)
-      logger.debug("Irie::ParamAliases.aliased_params(#{function_sym.inspect})") if ::Irie.debug?
+      ::Irie.logger.debug("[Irie] Irie::ParamAliases.aliased_params(#{function_sym.inspect})") if ::Irie.debug?
       if self.function_param_names.key?(function_sym)
         self.function_param_names[function_sym].select {|v| params.key?(v)}.collect {|param_name| params[param_name]}
       else
@@ -18,7 +18,7 @@ module Irie
     end
 
     def aliased_param_present?(function_sym)
-      logger.debug("Irie::ParamAliases.aliased_param_key?(#{function_sym.inspect})") if ::Irie.debug?
+      ::Irie.logger.debug("[Irie] Irie::ParamAliases.aliased_param_key?(#{function_sym.inspect})") if ::Irie.debug?
       if self.function_param_names.key?(function_sym)
         self.function_param_names[function_sym].select {|v| params.key?(v)}.any? {|param_name| params.key?(param_name)}
       else
@@ -28,7 +28,7 @@ module Irie
 
     # Same as aliased_params(function_sym).first.
     def aliased_param(function_sym)
-      logger.debug("Irie::ParamAliases.aliased_param(#{function_sym.inspect})") if ::Irie.debug?
+      ::Irie.logger.debug("[Irie] Irie::ParamAliases.aliased_param(#{function_sym.inspect})") if ::Irie.debug?
       aliased_params(function_sym).first
     end
 

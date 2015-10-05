@@ -93,13 +93,15 @@ module Irie
         end
 
         (find_arel_table = ->(last_resource_class, val) do
+          ::Irie.logger.debug("[Irie] Irie::Extensions::ParamsToJoins.get_arel_table: calling anonymous function with #{last_resource_class.inspect}, #{val.inspect}") if ::Irie.debug?
           case val
           when String, Symbol
             find_assoc_resource_class.call(last_resource_class, val).arel_table
           when Hash
             find_arel_table.call(find_assoc_resource_class.call(last_resource_class, val.keys.first), val.values.first)
           else
-            raise ::Irie::ConfigurationError.new "get_arel_table failed because unhandled #{val} in joins in through"
+            ::Irie.logger.debug("[Irie] Irie::Extensions::ParamsToJoins.get_arel_table: unhandled val in anonymous function: #{val.inspect}") if ::Irie.debug?
+            raise ::Irie::ConfigurationError.new "get_arel_table failed because unhandled(#{last_resource_class.inspect}, #{val.inspect}) in joins in through"
           end
         end)[resource_class, opts[:joins]]
       end

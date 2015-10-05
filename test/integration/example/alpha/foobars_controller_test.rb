@@ -41,9 +41,13 @@ class Example::Alpha::TestFoobarsController < ActionDispatch::IntegrationTest
 
   test 'index allows requested ascending order with default filter' do
     expected = Foobar.all.to_a.reject!{|i|i.foo_id == 3} # default filter
-    queries = QueryCollector.collect_all do
-      get "/example/alpha/awesome_routing_scope/foobars.json?order=foo_id,+bar_code,-renamed_foo_id"
-    end
+
+    QueryCollector.reset
+    #Irie.debug = Irie.verbose = true
+    get "/example/alpha/awesome_routing_scope/foobars.json?order=foo_id,+bar_code,-renamed_foo_id"
+    #Irie.debug = Irie.verbose = false
+    queries = QueryCollector.all
+
     assert_equal expected, assigns(:foobars).to_a
     # note: ids, created_at, updated_at and order of keys are ignored- see https://github.com/collectiveidea/json_spec
     first_id = expected.last.id-(expected.length - 1)
@@ -51,7 +55,7 @@ class Example::Alpha::TestFoobarsController < ActionDispatch::IntegrationTest
     assert_equal "{\"check\":\"foobars-index: size=#{expected.length}, ids=#{expected.collect{|f|f.id}.join(',')}\"}", response.body
     # experimental at the moment. eventually want to try to cleanly ensure includes are being used
     query_count = queries.select{|r|r.last.try(:[],:name).try(:end_with?," Load")}.count
-    assert_equal 2, query_count, "Expected /example/alpha/awesome_routing_scope/foobars.json?order=foo_id,+bar_code,-renamed_foo_id to have 2 load queries, but had #{query_count} load queries: #{queries.inspect}"
+    assert_equal 2, query_count, "Expected /example/alpha/awesome_routing_scope/foobars.json?order=foo_id,+bar_code,-renamed_foo_id to have 2 load queries, but had #{query_count} load queries (make sure verbose is off): #{queries.inspect}"
   end
 
   test 'index returns foobars with simple filter' do
@@ -145,11 +149,11 @@ class Example::Alpha::TestFoobarsController < ActionDispatch::IntegrationTest
     Foobar.delete_all
     before_count = Foobar.count
     code = "new#{rand(99999)}"
-    queries = QueryCollector.collect_all do
+    QueryCollector.reset
       post "/example/alpha/awesome_routing_scope/foobars.json", foobar: {foo_attributes: {code: code}}    
       assert_equal 200, response.status, "Bad response code (got #{response.status}): #{response.body}"
       s = response.body
-    end
+    queries = QueryCollector.all
     
     assert_equal before_count + 1, Foobar.count, "Didn't create Foobar"
     last_foobar = Foobar.last
@@ -167,6 +171,7 @@ class Example::Alpha::TestFoobarsController < ActionDispatch::IntegrationTest
   #end
   end
 
+  #TODO: get this test working again
   test 'create does not accept non-whitelisted params' do
     before_count = Foobar.count
     begin

@@ -1,18 +1,39 @@
 ENV["RAILS_ENV"] = "test"
 
-$:.unshift File.dirname(__FILE__)
-
-unless ENV['CI']
-  require 'simplecov'
-  SimpleCov.start do
-    add_filter '/gemfiles/'
-    add_filter '/spec/'
-    add_filter '/temp/'
-  end
+# instead of trying to control all logging, just delete the file on start
+dummy_app_log_pathname = 'test/dummy/log/test.log'
+if File.exist?(dummy_app_log_pathname)
+  puts "Deleting #{dummy_app_log_pathname}"
+  File.delete(dummy_app_log_pathname)
 end
 
-require 'dummy/config/environment'
-require 'dummy/db/schema'
+#$:.unshift File.dirname(__FILE__)
+
+#require 'dummy/config/environment'
+#require 'dummy/db/schema'
+
+require 'rubygems'
+require 'bundler/setup'
+
+require 'combustion'
+Combustion.path = 'test/dummy'
+Combustion.initialize!(:all) do
+  if Rails::VERSION::MAJOR < 4
+    # adding to autoload paths not working w/combustion + Rails 3.2, even though it complains later when reloading.
+    load '/Users/gary/github/irie/test/dummy/app/controllers/concerns/example/boolean_params.rb'
+    load '/Users/gary/github/irie/test/dummy/app/controllers/concerns/example/service_controller_behavior.rb'
+
+    config.active_record.whitelist_attributes = false
+  else
+    config.active_support.test_order = :sorted
+  end
+end
+ActiveRecord::Base.class_eval do
+  include ActiveModel::ForbiddenAttributesProtection, CanCan::ModelAdditions
+end
+ActionController::Parameters.action_on_unpermitted_parameters = :raise
+
+Irie.debug = false
 require 'rails/test_help'
 
 #$:.unshift File.expand_path('../support', __FILE__)
@@ -61,9 +82,11 @@ class QueryCollector
     self.class.list << args
   end
   
-  def self.collect_all(&block)
+  def self.reset
     self.list = []
-    yield
+  end
+
+  def self.all
     self.list
   end
 end
