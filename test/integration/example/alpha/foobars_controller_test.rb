@@ -28,11 +28,7 @@ class Example::Alpha::TestFoobarsController < ActionDispatch::IntegrationTest
   end
 
   test 'index returns foobars via through filter' do
-    if Rails::VERSION::MAJOR < 4
-      expected_foobar = Foobar.joins(foo: :bar).where(Bar.arel_table[:open_hours].eq(Bar.last.open_hours)).to_a.first
-    else
-      expected_foobar = Foobar.all.joins(foo: :bar).where(Bar.arel_table[:open_hours].eq(Bar.last.open_hours)).to_a.first
-    end
+    expected_foobar = Foobar.all.joins(foo: :bar).where(Bar.arel_table[:open_hours].eq(Bar.last.open_hours)).to_a.first
 
     get "/example/alpha/awesome_routing_scope/foobars.json?open_hours=#{Foobar.last.foo.bar.open_hours}"
     assert_equal 1, assigns(:foobars).length

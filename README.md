@@ -2,7 +2,7 @@
 
 # Irie
 
-Inherited Resources including extensions. Tested with Rails 3.2, 4.0, 4.1, Rails edge, Inherited Resources 1.4 and edge, in Ruby 1.9.3, 2.0.0, and jruby-19mode.
+Inherited Resources Including Extensions. Tested with Rails 4.0, 4.1, 4.2, Inherited Resources 1.4, 1.5, 1.6, Ruby 2.2.3, and JRuby 9.0.0.0.
 
 Extend [Inherited Resources][inherited_resources] actions with the `extensions` method which provides symbolic references to do module includes as well as automatic inclusion of modules based on what `actions` are defined. The included extensions provide more of a DSL-like way to define your controllers. And, instead of model-heavy development via `scope` in models and `has_scope` in the controller, you can just define request parameter-based filters and their defaults in the controller. Ordering, parameter value conversion, pagination, and more are supported without additional dependencies.
 

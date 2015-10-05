@@ -18,15 +18,7 @@ require 'bundler/setup'
 require 'combustion'
 Combustion.path = 'test/dummy'
 Combustion.initialize!(:all) do
-  if Rails::VERSION::MAJOR < 4
-    # adding to autoload paths not working w/combustion + Rails 3.2, even though it complains later when reloading.
-    load '/Users/gary/github/irie/test/dummy/app/controllers/concerns/example/boolean_params.rb'
-    load '/Users/gary/github/irie/test/dummy/app/controllers/concerns/example/service_controller_behavior.rb'
-
-    config.active_record.whitelist_attributes = false
-  else
-    config.active_support.test_order = :sorted
-  end
+  config.active_support.test_order = :sorted
 end
 ActiveRecord::Base.class_eval do
   include ActiveModel::ForbiddenAttributesProtection, CanCan::ModelAdditions
@@ -43,12 +35,7 @@ puts "Testing Rails v#{Rails.version}"
 Rails.backtrace_cleaner.remove_silencers!
 
 require 'database_cleaner'
-if Rails::VERSION::MAJOR < 4
-  DatabaseCleaner.strategy = :truncation
-  def patch(*args, &block); put(*args, &block); end
-else
-  DatabaseCleaner.strategy = :transaction
-end
+DatabaseCleaner.strategy = :transaction
 
 require 'irie'
 
